@@ -1,0 +1,680 @@
+/*
+  style.css — Madni Masjid Website
+  ===================================
+  Sections:
+  - Global (smooth scroll, focus ring)
+  - Hero background
+  - Navbar (light + dark)
+  - Prayer table (alignment via <colgroup>, mobile horizontal scroll)
+  - About-section carousel (replaces the old gallery + lightbox)
+  - Animations + scrollbar
+*/
+
+
+/* ==============================================
+   GLOBAL
+   ============================================== */
+html { scroll-behavior: smooth; }
+
+:focus-visible {
+  outline: 3px solid #059669;
+  outline-offset: 2px;
+}
+
+
+/* ==============================================
+   HERO BACKGROUND
+   ============================================== */
+.hero-bg {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 40%, #047857 100%);
+}
+
+
+/* ==============================================
+   NAVIGATION — LIGHT MODE
+   ============================================== */
+#navbar.nav-scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+#navbar.nav-scrolled .nav-logo-text { color: #065f46; }
+#navbar.nav-scrolled .nav-links a   { color: #374151; }
+#navbar.nav-scrolled .nav-links a:hover { color: #059669; }
+
+#menu-btn { transition: color 0.3s ease; }
+#navbar.nav-scrolled #menu-btn { color: #065f46; }
+
+
+/* ==============================================
+   NAVIGATION — DARK MODE
+   ============================================== */
+@media (prefers-color-scheme: dark) {
+  #navbar.nav-scrolled {
+    background: rgba(17, 24, 39, 0.97);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  }
+  #navbar.nav-scrolled .nav-logo-text  { color: #6ee7b7; }
+  #navbar.nav-scrolled .nav-links a    { color: #d1d5db; }
+  #navbar.nav-scrolled .nav-links a:hover { color: #6ee7b7; }
+  #navbar.nav-scrolled #menu-btn       { color: #d1d5db; }
+}
+
+
+/* ==============================================
+   PRAYER TABLE — CENTERED + MOBILE-FIT
+   ============================================== */
+/*
+  Design decisions on this version:
+
+  1. Times are CENTRE-aligned (was: right-aligned). With column widths
+     pinned via <colgroup>, centring the times means each value sits in
+     the middle of its column directly under its header label.
+
+  2. The table FITS on mobile without horizontal scroll. Previously we
+     forced min-width: 380px so MAGHRIB wouldn't squash; now we shrink
+     the font on narrow screens instead so all seven columns fit in the
+     ~272px content area on a 360px-wide phone.
+
+  3. The Today card has 6 columns (label + 5 prayers) — no date column,
+     because the date is already shown in the card header ("Saturday,
+     16 May 2026"). The Monthly table keeps the 7th column (Date) to
+     identify each day's row.
+
+  Column widths (sum to 100%):
+    Today    : label 18 + (prayer 16.4 × 5 = 82) = 100
+    Monthly  : date 14 + label 13 + (prayer 14.6 × 5 = 73) = 100
+*/
+
+.prayer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  table-layout: fixed;
+}
+
+/* Monthly column widths */
+.prayer-table col.col-date   { width: 14%; }
+.prayer-table col.col-label  { width: 13%; }
+.prayer-table col.col-prayer { width: 14.6%; }
+
+/* Today summary: 6-column layout (no date column) */
+#today-summary .prayer-table col.col-label  { width: 18%; }
+#today-summary .prayer-table col.col-prayer { width: 16.4%; }
+
+/*
+  Cell padding + alignment.
+
+  CENTRE alignment for every cell — both <th> headers and <td> data —
+  means the header text and the time directly below it always sit at the
+  same x position regardless of character width differences.
+*/
+.prayer-table th,
+.prayer-table td {
+  padding: 6px 4px;
+  vertical-align: middle;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.prayer-table thead th {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  font-weight: 600;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  color: #6b7280;           /* gray-500 */
+  letter-spacing: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prayer-table thead th { color: #9ca3af; }
+}
+
+/* Date column — left-aligned because content is "1 Sat", not a time */
+.prayer-col-date {
+  text-align: left;
+  vertical-align: top;
+  padding-left: 6px;
+}
+
+/* "Start" / "Jamaat" label column — left-aligned, smaller, soft colour */
+.prayer-col-label,
+.prayer-table td.label-cell {
+  text-align: left;
+  font-size: 0.7rem;
+  color: #6b7280;
+  padding-left: 6px;
+}
+
+/* Row dividers */
+.prayer-table tbody tr { border-top: 1px solid #e7e5e4; }
+
+/* Row highlight classes — set by JS */
+.row-today   { background-color: #f0fdf4; }
+.row-friday  { background-color: #fffbeb; }
+
+@media (prefers-color-scheme: dark) {
+  .prayer-table tbody tr { border-color: #374151; }
+  .prayer-col-label,
+  .prayer-table td.label-cell { color: #9ca3af; }
+  .row-today  { background-color: rgba(6, 78, 59, 0.35); }
+  .row-friday { background-color: rgba(120, 53, 15, 0.25); }
+}
+
+/* Wrapper retained for safety, but no horizontal scroll is expected */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/*
+  Mobile (≤480px): shrink fonts + tighten padding so the 7-column
+  Monthly table and the 6-column Today card both fit comfortably in
+  ~272px of available width — no horizontal scroll required.
+*/
+@media (max-width: 480px) {
+  .prayer-table          { font-size: 0.7rem; }
+  .prayer-table th,
+  .prayer-table td       { padding: 5px 2px; }
+  .prayer-table thead th { font-size: 0.6rem; padding: 7px 2px; }
+  .prayer-col-date       { padding-left: 3px; font-size: 0.65rem; }
+  .prayer-col-label,
+  .prayer-table td.label-cell { font-size: 0.62rem; padding-left: 3px; }
+}
+
+
+/* ==============================================
+   NEXT-PRAYER COUNTDOWN BANNER
+   ============================================== */
+/*
+  Lives at the top of the Today card, above the start/jamaat table.
+  Filled and ticked by updateNextPrayer() in script.js every 30 seconds.
+
+  Layout:
+    eyebrow  →  "NEXT PRAYER" (small, uppercase, accent green)
+    main row →  "Asr Jamaat at 19:15"
+    cards    →  "Start at 18:42" / "Jamaat at 19:15" with countdowns
+
+  The cards sit in a two-column grid on wider screens and stack neatly
+  on narrow phones.
+
+  Colours mirror the site's emerald palette and adapt to dark mode.
+  tabular-nums keeps the countdown digits from shifting horizontally as
+  the values tick down ("12m" → "9m" doesn't make the layout jump).
+*/
+.next-prayer {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #a7f3d0;
+  border-left: 4px solid #059669;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.next-prayer-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #047857;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.next-prayer-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.next-prayer-main {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.next-prayer-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #064e3b;
+}
+
+.next-prayer-time {
+  font-size: 0.85rem;
+  color: #065f46;
+}
+
+.next-prayer-times {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.next-prayer-times.is-single {
+  grid-template-columns: 1fr;
+}
+
+.next-prayer-time-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(5, 150, 105, 0.18);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.next-prayer-time-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.next-prayer-time-label {
+  font-size: 0.58rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #047857;
+  font-weight: 700;
+}
+
+.next-prayer-time-value {
+  font-size: 0.78rem;
+  color: #065f46;
+  white-space: nowrap;
+}
+
+.next-prayer-countdown {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #064e3b;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.next-prayer-time-card.is-past .next-prayer-countdown {
+  opacity: 0.76;
+}
+
+@media (prefers-color-scheme: dark) {
+  .next-prayer {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.5) 0%, rgba(6, 95, 70, 0.35) 100%);
+    border-color: rgba(110, 231, 183, 0.25);
+    border-left-color: #10b981;
+  }
+  .next-prayer-label     { color: #6ee7b7; }
+  .next-prayer-name      { color: #ecfdf5; }
+  .next-prayer-time      { color: #a7f3d0; }
+  .next-prayer-time-card {
+    background: rgba(15, 23, 42, 0.28);
+    border-color: rgba(110, 231, 183, 0.16);
+  }
+  .next-prayer-time-label { color: #6ee7b7; }
+  .next-prayer-time-value { color: #a7f3d0; }
+  .next-prayer-countdown { color: #f0fdf4; }
+}
+
+@media (max-width: 480px) {
+  .next-prayer           { padding: 9px 12px; }
+  .next-prayer-name      { font-size: 0.95rem; }
+  .next-prayer-time      { font-size: 0.78rem; }
+  .next-prayer-times     { grid-template-columns: 1fr; }
+  .next-prayer-countdown { font-size: 0.9rem; }
+}
+
+
+/* ==============================================
+   ABOUT-SECTION CAROUSEL
+   ============================================== */
+/*
+  The carousel sits in the About section in place of the previous static
+  figure. It's a simple fade-between-slides carousel — one slide visible
+  at a time, controlled by Prev/Next buttons and indicator dots. Missing
+  images (e.g. before-1.jpg not yet uploaded) are auto-hidden via the
+  .slide-missing class added by the <img onerror> handler.
+*/
+
+.carousel {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e7e5e4;                  /* stone-200 placeholder */
+  outline: none;                        /* we draw our own focus ring on dots */
+}
+
+@media (prefers-color-scheme: dark) {
+  .carousel { background: #374151; }    /* gray-700 */
+}
+
+.carousel-viewport {
+  position: relative;
+  width: 100%;
+  /* 4:3 aspect ratio keeps the layout stable while images load */
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.carousel-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  inset: 0;
+}
+
+.carousel-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease;
+  margin: 0;
+}
+
+.carousel-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;     /* needed so z-index applies — image sits OVER the placeholder */
+  z-index: 1;
+  cursor: zoom-in;        /* tells visitors they can click for a bigger view */
+}
+
+/*
+  PLACEHOLDER (shown until the real photo exists)
+
+  Every slide contains both an <img> and a .slide-placeholder. The
+  placeholder fills the slide and sits BEHIND the image (z-index). When
+  the image file loads successfully, it covers the placeholder. When
+  the file is missing, the <img onerror> handler adds .img-missing,
+  which hides the broken image and lets the placeholder show through.
+
+  Visitors see a tasteful "Photo coming soon" card with a camera icon
+  and label — the carousel still cycles through all five, and clicking
+  one opens it in the lightbox just like a real photo.
+*/
+.slide-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  text-align: center;
+  background: linear-gradient(135deg, #e7e5e4 0%, #d6d3d1 100%); /* stone-200 → stone-300 */
+  color: #57534e;                                                 /* stone-600 */
+  cursor: zoom-in;
+}
+
+.placeholder-icon {
+  width: 56px;
+  height: 56px;
+  opacity: 0.6;
+}
+
+.placeholder-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #44403c;          /* stone-700 */
+  max-width: 80%;
+  line-height: 1.3;
+}
+
+.placeholder-sub {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: #78716c;          /* stone-500 */
+  letter-spacing: 0.02em;
+}
+
+/* Hide the broken <img> so the placeholder behind it shows through */
+.carousel-slide.img-missing img { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  .slide-placeholder {
+    background: linear-gradient(135deg, #44403c 0%, #292524 100%); /* stone-700 → stone-800 */
+    color: #d6d3d1;                                                 /* stone-300 */
+  }
+  .placeholder-label { color: #e7e5e4; }                            /* stone-200 */
+  .placeholder-sub   { color: #a8a29e; }                            /* stone-400 */
+}
+
+@media (max-width: 480px) {
+  .placeholder-icon  { width: 44px; height: 44px; }
+  .placeholder-label { font-size: 0.85rem; }
+  .placeholder-sub   { font-size: 0.68rem; }
+}
+
+/* Prev / Next buttons */
+.carousel-btn {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  background: transparent;
+  color: #fff;
+  border: none;
+  width: 52px;
+  height: 100%;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.carousel-btn svg {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.carousel-btn:hover,
+.carousel-btn:focus-visible { background: rgba(0, 0, 0, 0.28); }
+
+.carousel-prev {
+  left: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0));
+}
+.carousel-next {
+  right: 0;
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0));
+}
+
+.carousel-prev:hover,
+.carousel-prev:focus-visible {
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.02));
+}
+
+.carousel-next:hover,
+.carousel-next:focus-visible {
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.02));
+}
+
+@media (max-width: 480px) {
+  .carousel-btn { width: 42px; }
+}
+
+/* Indicator dots */
+.carousel-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 5px 8px;
+  border-radius: 999px;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.carousel-dot:hover { background: rgba(255, 255, 255, 0.85); }
+.carousel-dot.is-active {
+  background: #fff;
+  transform: scale(1.25);
+}
+
+
+/* ==============================================
+   LIGHTBOX — click-to-enlarge for carousel slides
+   ============================================== */
+/*
+  Full-screen overlay that fades in when a carousel slide is clicked.
+  The JS in script.js inserts either a cloned <img> or a cloned
+  .slide-placeholder into #lightbox-content depending on what the user
+  clicked. Closes on: × button, Esc key, or clicking the dark backdrop
+  outside the content.
+*/
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  cursor: zoom-out;
+  animation: lightboxFadeIn 0.18s ease;
+}
+
+.lightbox[hidden] { display: none; }
+
+@keyframes lightboxFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/*
+  The content wrapper has its own cursor: default — clicking the image
+  itself should NOT close the lightbox (only clicking the backdrop does).
+  JS uses the cursor/event-target to distinguish.
+*/
+.lightbox-content {
+  max-width: 95vw;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: default;
+}
+
+.lightbox-content img {
+  display: block;
+  max-width: 95vw;
+  max-height: 82vh;
+  border-radius: 8px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  object-fit: contain;
+}
+
+/* When a placeholder is enlarged inside the lightbox */
+.lightbox-content .slide-placeholder {
+  position: relative;     /* override the absolute positioning from the carousel */
+  inset: auto;
+  width: min(80vw, 700px);
+  height: min(60vh, 525px);   /* 4:3 ratio */
+  border-radius: 8px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  cursor: default;
+}
+.lightbox-content .placeholder-icon  { width: 96px; height: 96px; }
+.lightbox-content .placeholder-label { font-size: 1.4rem; }
+.lightbox-content .placeholder-sub   { font-size: 0.95rem; }
+
+.lightbox-close {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 101;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.lightbox-close:hover,
+.lightbox-close:focus-visible {
+  background: rgba(255, 255, 255, 0.18);
+  transform: scale(1.08);
+}
+
+
+/* ==============================================
+   FADE-IN ANIMATIONS
+   ============================================== */
+.fade-in {
+  animation: fadeInUp 0.9s ease both;
+}
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ==============================================
+   CUSTOM SCROLLBAR
+   ============================================== */
+::-webkit-scrollbar       { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #059669; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #047857; }
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-track { background: #1f2937; }
+}
+
+
+/* ==============================================
+   MISC
+   ============================================== */
+@media (max-width: 640px) {
+  .hero-bg h1 { line-height: 1.1; }
+}

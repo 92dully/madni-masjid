@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Madni Masjid – Glasgow</title>
+
+  <!-- Browser-tab icon: emerald crescent-and-star SVG (see favicon.svg) -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!--
+    jsPDF + AutoTable plugin — used for PDF download of prayer timetable.
+    These two scripts together let us build a clean table PDF entirely in
+    the browser with no backend required.
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          fontFamily: {
+            heading: ['Amiri', 'serif'],
+            body:    ['Nunito', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <meta name="color-scheme" content="light dark" />
+</head>
+
+<body class="font-body bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased transition-colors duration-300">
+
+
+  <!-- =====================================================
+       NAVIGATION
+  ====================================================== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 py-3 px-6">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+
+      <a href="#hero" class="font-heading text-xl font-bold text-white nav-logo-text">
+        Madni Masjid
+      </a>
+
+      <ul class="hidden md:flex items-center gap-5 text-white nav-links text-sm">
+        <li><a href="#about"        class="hover:text-emerald-200 transition-colors">About</a></li>
+        <li><a href="#prayer-times" class="hover:text-emerald-200 transition-colors">Prayer Times</a></li>
+        <li><a href="#learning"     class="hover:text-emerald-200 transition-colors">Learning</a></li>
+        <li><a href="#donate"       class="hover:text-emerald-200 transition-colors">Donate</a></li>
+        <li><a href="#contact"      class="hover:text-emerald-200 transition-colors">Contact</a></li>
+      </ul>
+
+      <button
+        id="menu-btn"
+        class="md:hidden text-white focus:outline-none"
+        aria-label="Open menu"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-menu"
+         class="hidden md:hidden mt-3 bg-white dark:bg-gray-800 rounded-lg shadow-md mx-4 p-4">
+      <ul class="flex flex-col gap-3 text-gray-700 dark:text-gray-200 text-sm">
+        <li><a href="#about"        class="mobile-link block hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">About</a></li>
+        <li><a href="#prayer-times" class="mobile-link block hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Prayer Times</a></li>
+        <li><a href="#learning"     class="mobile-link block hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Learning</a></li>
+        <li><a href="#donate"       class="mobile-link block hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Donate</a></li>
+        <li><a href="#contact"      class="mobile-link block hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!-- =====================================================
+       HERO
+  ====================================================== -->
+  <section id="hero" class="hero-bg pt-28 pb-16 px-6 text-center text-white">
+    <div class="max-w-xl mx-auto">
+
+      <p lang="ar" dir="rtl"
+         class="font-heading text-2xl md:text-3xl text-emerald-100 mb-6 leading-relaxed">
+        بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
+      </p>
+
+      <h1 class="font-heading text-4xl md:text-5xl font-bold mb-2">
+        Madni Masjid
+      </h1>
+
+      <p class="text-emerald-100 mb-6">
+        Langside Road, Glasgow
+      </p>
+
+      <p class="text-base md:text-lg leading-relaxed mb-3 opacity-95">
+        Serving the local Muslim community with daily prayers,
+        Islamic learning, and support.
+      </p>
+
+      <p class="text-sm text-emerald-100 mb-8">
+        The masjid currently has prayer facilities for men only.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="#prayer-times"
+           class="bg-white text-emerald-700 font-semibold px-6 py-2.5 rounded transition-colors hover:bg-emerald-50">
+          Prayer Times
+        </a>
+        <a href="#contact"
+           class="border border-white text-white font-semibold px-6 py-2.5 rounded transition-colors hover:bg-white hover:text-emerald-700">
+          Contact
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       ABOUT
+  ====================================================== -->
+  <section id="about" class="py-16 px-6 bg-white dark:bg-gray-900">
+    <div class="max-w-3xl mx-auto">
+
+      <h2 class="font-heading text-3xl text-gray-800 dark:text-gray-100 mb-6 text-center">About</h2>
+
+      <div class="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+        <p>
+          Madni Masjid serves the local Muslim community in Glasgow.
+          The masjid provides space for daily prayers, Jumu&rsquo;ah,
+          Qur&rsquo;an learning, and local community support.
+        </p>
+        <p>
+          We aim to be a calm and welcoming space for worship and learning,
+          rooted in the everyday needs of those who attend.
+        </p>
+        <p class="text-gray-600 dark:text-gray-400">
+          The masjid currently provides prayer facilities for men only.
+        </p>
+      </div>
+
+      <!-- E-Masjid Live Audio link -->
+      <div class="mt-8 p-4 bg-emerald-50 dark:bg-emerald-900/30
+                  border border-emerald-200 dark:border-emerald-800 rounded
+                  flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <p class="font-semibold text-emerald-800 dark:text-emerald-300 text-sm">Live Masjid Audio</p>
+          <p class="text-emerald-700 dark:text-emerald-400 text-xs mt-0.5">
+            Listen to live audio from Madni Masjid via E-Masjid Live
+          </p>
+        </div>
+        <a
+          href="https://emasjidlive.co.uk/listen/madni_masjid"
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800
+                 text-white text-sm font-semibold px-4 py-2 rounded transition-colors whitespace-nowrap"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15.536 8.464a5 5 0 010 7.072M12 6a7 7 0 010 12M9 9a3 3 0 000 6"/>
+          </svg>
+          Listen Live
+        </a>
+      </div>
+
+      <!--
+        CAROUSEL — auto-rotating photo display with click-to-enlarge.
+
+        How each slide works:
+        =====================
+        Each <li> contains both a .slide-placeholder block and an <img>.
+        The placeholder is layered BEHIND the image (CSS z-index). When
+        the image file exists, it covers the placeholder seamlessly. When
+        the file is missing (or hasn't been added yet), the onerror
+        handler tags the slide as .img-missing — CSS then hides the
+        broken <img> so the placeholder shows through.
+
+        That means you can leave every slot wired up below even before
+        photos are uploaded — visitors see a labelled placeholder, the
+        autoplay still cycles through all five, and clicking any slide
+        opens it in the lightbox just like a real photo.
+
+        Filenames already pre-wired:
+          - photos/Madni Mssjid.JPG  (interior shot — already exists)
+          - photos/before-1.jpg      (refurbishment before)
+          - photos/before-2.jpg
+          - photos/after-1.jpg       (refurbishment after)
+          - photos/after-2.jpg
+        Drop any of those filenames into photos/ to replace its placeholder.
+      -->
+      <div id="masjid-carousel"
+           class="carousel mt-10 mx-auto max-w-xl"
+           aria-roledescription="carousel"
+           aria-label="Madni Masjid photos">
+
+        <div class="carousel-viewport">
+          <ul class="carousel-track">
+
+            <li class="carousel-slide is-active">
+              <div class="slide-placeholder" aria-hidden="true">
+                <svg class="placeholder-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                  <rect x="3" y="9" width="26" height="18" rx="2"/>
+                  <path d="M11 9 L13 6 L19 6 L21 9"/>
+                  <circle cx="16" cy="18" r="5"/>
+                  <circle cx="25" cy="13" r="0.8" fill="currentColor"/>
+                </svg>
+                <div class="placeholder-label">Gallery image</div>
+                <div class="placeholder-sub">Photo coming soon</div>
+              </div>
+              <img src="photos/Madni Mssjid.JPG"
+                   alt="Inside Madni Masjid, with the masjid name shown in Arabic on the windows"
+                   loading="eager"
+                   onerror="this.closest('.carousel-slide').classList.add('img-missing')" />
+            </li>
+
+            <li class="carousel-slide">
+              <div class="slide-placeholder" aria-hidden="true">
+                <svg class="placeholder-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                  <rect x="3" y="9" width="26" height="18" rx="2"/>
+                  <path d="M11 9 L13 6 L19 6 L21 9"/>
+                  <circle cx="16" cy="18" r="5"/>
+                  <circle cx="25" cy="13" r="0.8" fill="currentColor"/>
+                </svg>
+                <div class="placeholder-label">Gallery image</div>
+                <div class="placeholder-sub">Photo coming soon</div>
+              </div>
+              <img src="photos/before-1.jpg"
+                   alt="Madni Masjid gallery photo"
+                   loading="lazy"
+                   onerror="this.closest('.carousel-slide').classList.add('img-missing')" />
+            </li>
+
+            <li class="carousel-slide">
+              <div class="slide-placeholder" aria-hidden="true">
+                <svg class="placeholder-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                  <rect x="3" y="9" width="26" height="18" rx="2"/>
+                  <path d="M11 9 L13 6 L19 6 L21 9"/>
+                  <circle cx="16" cy="18" r="5"/>
+                  <circle cx="25" cy="13" r="0.8" fill="currentColor"/>
+                </svg>
+                <div class="placeholder-label">Gallery image</div>
+                <div class="placeholder-sub">Photo coming soon</div>
+              </div>
+              <img src="photos/before-2.jpg"
+                   alt="Madni Masjid gallery photo"
+                   loading="lazy"
+                   onerror="this.closest('.carousel-slide').classList.add('img-missing')" />
+            </li>
+
+            <li class="carousel-slide">
+              <div class="slide-placeholder" aria-hidden="true">
+                <svg class="placeholder-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                  <rect x="3" y="9" width="26" height="18" rx="2"/>
+                  <path d="M11 9 L13 6 L19 6 L21 9"/>
+                  <circle cx="16" cy="18" r="5"/>
+                  <circle cx="25" cy="13" r="0.8" fill="currentColor"/>
+                </svg>
+                <div class="placeholder-label">Gallery image</div>
+                <div class="placeholder-sub">Photo coming soon</div>
+              </div>
+              <img src="photos/after-1.jpg"
+                   alt="Madni Masjid gallery photo"
+                   loading="lazy"
+                   onerror="this.closest('.carousel-slide').classList.add('img-missing')" />
+            </li>
+
+            <li class="carousel-slide">
+              <div class="slide-placeholder" aria-hidden="true">
+                <svg class="placeholder-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+                  <rect x="3" y="9" width="26" height="18" rx="2"/>
+                  <path d="M11 9 L13 6 L19 6 L21 9"/>
+                  <circle cx="16" cy="18" r="5"/>
+                  <circle cx="25" cy="13" r="0.8" fill="currentColor"/>
+                </svg>
+                <div class="placeholder-label">Gallery image</div>
+                <div class="placeholder-sub">Photo coming soon</div>
+              </div>
+              <img src="photos/after-2.jpg"
+                   alt="Madni Masjid gallery photo"
+                   loading="lazy"
+                   onerror="this.closest('.carousel-slide').classList.add('img-missing')" />
+            </li>
+
+          </ul>
+        </div>
+
+        <button class="carousel-btn carousel-prev" type="button" aria-label="Previous photo">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button class="carousel-btn carousel-next" type="button" aria-label="Next photo">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <div class="carousel-dots" role="tablist" aria-label="Choose a photo"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       PRAYER TIMES
+       Data loaded from prayer-times.js → window.PRAYER_TIMES_DATA
+       To regenerate: python _build_data.py
+  ====================================================== -->
+  <section id="prayer-times" class="py-16 px-6 bg-stone-50 dark:bg-gray-800">
+    <div class="max-w-3xl mx-auto">
+
+      <h2 class="font-heading text-3xl text-gray-800 dark:text-gray-100 mb-2 text-center">Prayer Times</h2>
+
+      <!-- masjid opening notice — requested addition -->
+      <p class="text-center text-sm text-emerald-700 dark:text-emerald-400 font-medium mb-6">
+        The masjid is open 15 minutes before and after every Jamaat.
+      </p>
+
+      <!-- Today's prayer times — populated by script.js -->
+      <div id="today-summary"
+           class="bg-white dark:bg-gray-900 border border-stone-200 dark:border-gray-700 rounded p-5">
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Loading today&rsquo;s prayer times&hellip;</p>
+      </div>
+
+      <!-- Monthly timetable — collapsed by default -->
+      <details class="mt-6 bg-white dark:bg-gray-900 border border-stone-200 dark:border-gray-700 rounded group">
+        <summary class="cursor-pointer select-none px-5 py-3 text-sm font-semibold
+                        text-gray-800 dark:text-gray-100 flex items-center justify-between">
+          <span>Monthly timetable</span>
+          <span class="text-gray-400 dark:text-gray-500 text-xs group-open:hidden">Show</span>
+          <span class="text-gray-400 dark:text-gray-500 text-xs hidden group-open:inline">Hide</span>
+        </summary>
+
+        <div class="border-t border-stone-200 dark:border-gray-700 px-5 py-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+            <select
+              id="month-select"
+              class="border border-stone-300 dark:border-gray-600 rounded px-3 py-2 text-sm
+                     bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100
+                     focus:outline-none focus:border-emerald-700 dark:focus:border-emerald-500"
+            >
+              <option>Loading&hellip;</option>
+            </select>
+
+            <!--
+              DOWNLOAD PDF button — CSV has been removed.
+              jsPDF (loaded in <head>) generates the PDF in the browser.
+            -->
+            <button
+              id="download-btn"
+              type="button"
+              class="border border-emerald-700 dark:border-emerald-500
+                     text-emerald-700 dark:text-emerald-400
+                     font-semibold text-sm px-4 py-2 rounded transition-colors
+                     hover:bg-emerald-700 dark:hover:bg-emerald-600 hover:text-white
+                     disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+            >
+              Download PDF
+            </button>
+          </div>
+
+          <!--
+            .table-scroll lets the table scroll horizontally on very narrow
+            phones. The colgroup below pins each column to an exact percentage
+            so the header row, the "Start" body row, and the "Jamaat" body
+            row all line up — regardless of browser / OS quirks.
+          -->
+          <div class="table-scroll">
+            <table id="month-table" class="prayer-table">
+              <colgroup>
+                <col class="col-date" />
+                <col class="col-label" />
+                <col class="col-prayer" />
+                <col class="col-prayer" />
+                <col class="col-prayer" />
+                <col class="col-prayer" />
+                <col class="col-prayer" />
+              </colgroup>
+              <!--
+                Header cells use only their column classes. Alignment, font
+                weight, font size, colour and case are all handled by
+                `.prayer-table thead th` in style.css — adding Tailwind
+                utility classes here would conflict with the body styles
+                and re-introduce the alignment offset.
+              -->
+              <thead class="bg-stone-100 dark:bg-gray-800">
+                <tr>
+                  <th class="prayer-col-date">Date</th>
+                  <th class="prayer-col-label"></th>
+                  <th class="prayer-col-time">Fajr</th>
+                  <th class="prayer-col-time">Zohar</th>
+                  <th class="prayer-col-time">Asr</th>
+                  <th class="prayer-col-time">Maghrib</th>
+                  <th class="prayer-col-time">Isha</th>
+                </tr>
+              </thead>
+              <tbody id="month-rows">
+                <tr>
+                  <td colspan="7" class="py-6 px-3 text-center text-gray-500 dark:text-gray-400">
+                    Loading timetable&hellip;
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       LEARNING / CLASSES — updated with new schedule & waiting list
+  ====================================================== -->
+  <section id="learning" class="py-16 px-6 bg-stone-50 dark:bg-gray-800">
+    <div class="max-w-3xl mx-auto">
+
+      <h2 class="font-heading text-3xl text-gray-800 dark:text-gray-100 mb-3 text-center">Learning</h2>
+      <p class="text-gray-600 dark:text-gray-400 text-sm text-center mb-8 max-w-xl mx-auto">
+        Islamic education for children held at the masjid.
+      </p>
+
+      <!-- Class details card -->
+      <div class="bg-white dark:bg-gray-900 border border-stone-200 dark:border-gray-700 rounded p-6 mb-5">
+        <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-4">
+          Hifz &amp; Nazara Classes
+        </h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex gap-3 items-baseline">
+            <span class="text-gray-400 dark:text-gray-500 w-28 shrink-0">Days</span>
+            <span class="text-gray-700 dark:text-gray-300">Monday to Friday</span>
+          </div>
+          <div class="flex gap-3 items-baseline">
+            <span class="text-gray-400 dark:text-gray-500 w-28 shrink-0">Time</span>
+            <span class="text-gray-700 dark:text-gray-300">5:00 pm &ndash; 6:45 pm</span>
+          </div>
+          <div class="flex gap-3 items-baseline">
+            <span class="text-gray-400 dark:text-gray-500 w-28 shrink-0">Ages</span>
+            <span class="text-gray-700 dark:text-gray-300">5 to 15 years only (no adult classes)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Waiting list notice -->
+      <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded p-4 text-sm">
+        <p class="font-semibold text-amber-800 dark:text-amber-300 mb-1">Waiting List</p>
+        <p class="text-amber-700 dark:text-amber-400 leading-relaxed">
+          There is currently an active waiting list. To enquire or join the waiting list,
+          please visit the masjid and speak to an Imam.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       DONATIONS — updated with bank details
+  ====================================================== -->
+  <section id="donate" class="py-16 px-6 bg-white dark:bg-gray-900">
+    <div class="max-w-2xl mx-auto">
+
+      <h2 class="font-heading text-3xl text-gray-800 dark:text-gray-100 mb-3 text-center">Donations</h2>
+      <p class="text-gray-600 dark:text-gray-400 text-sm text-center mb-8">
+        Your support helps maintain the masjid and serve the community.
+        Jazakallah Khair.
+      </p>
+
+      <div class="bg-stone-50 dark:bg-gray-800 border border-stone-200 dark:border-gray-700 rounded p-6">
+        <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs uppercase tracking-widest mb-4">
+          Bank Transfer Details
+        </h3>
+        <div class="divide-y divide-stone-200 dark:divide-gray-700">
+
+          <div class="flex justify-between items-baseline py-2.5">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Bank</span>
+            <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Bank of Scotland</span>
+          </div>
+
+          <div class="flex justify-between items-baseline py-2.5">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Account Name</span>
+            <span class="text-sm font-medium text-gray-800 dark:text-gray-100">Madni Masjid</span>
+          </div>
+
+          <div class="flex justify-between items-baseline py-2.5">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Sort Code</span>
+            <!-- Monospace font makes numbers easier to read and copy -->
+            <span class="font-mono font-semibold text-gray-800 dark:text-gray-100 tracking-wider">80-22-60</span>
+          </div>
+
+          <div class="flex justify-between items-baseline py-2.5">
+            <span class="text-sm text-gray-500 dark:text-gray-400">Account Number</span>
+            <span class="font-mono font-semibold text-gray-800 dark:text-gray-100 tracking-wider">21492564</span>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       CONTACT — phone removed, email added, address corrected
+  ====================================================== -->
+  <section id="contact" class="py-16 px-6 bg-stone-50 dark:bg-gray-800">
+    <div class="max-w-4xl mx-auto">
+
+      <h2 class="font-heading text-3xl text-gray-800 dark:text-gray-100 mb-8 text-center">Contact</h2>
+
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div class="space-y-6 text-sm">
+
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-1">Address</h3>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+              196 Langside Road<br>
+              Glasgow<br>
+              G42 8XL<br>
+              United Kingdom
+            </p>
+            <a
+              href="https://www.google.com/maps?q=Madni+Masjid+196+Langside+Road+Glasgow+G42+8XL"
+              target="_blank"
+              rel="noopener"
+              class="text-emerald-700 dark:text-emerald-400 hover:underline mt-2 inline-block"
+            >
+              Open in Google Maps
+            </a>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-1">Email</h3>
+            <a href="mailto:madnimasjid196@gmail.com"
+               class="text-gray-700 dark:text-gray-300 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors break-all">
+              madnimasjid196@gmail.com
+            </a>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-1">Opening</h3>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+              Open for the five daily prayers. See Prayer Times above.
+            </p>
+            <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
+              The masjid is open 15 minutes before and after every Jamaat.
+            </p>
+          </div>
+
+        </div>
+
+        <div>
+          <div class="rounded overflow-hidden border border-stone-200 dark:border-gray-700">
+            <iframe
+              src="https://www.google.com/maps?q=Madni+Masjid+196+Langside+Road+Glasgow+G42+8XL&output=embed"
+              width="100%"
+              height="280"
+              style="border: 0;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Madni Masjid location on Google Maps"
+            ></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =====================================================
+       FOOTER — phone removed, email added, address corrected
+  ====================================================== -->
+  <footer class="bg-gray-900 text-gray-300 py-8 px-6">
+    <div class="max-w-4xl mx-auto text-center text-sm">
+      <p class="font-heading text-lg text-white mb-1">Madni Masjid</p>
+      <p>196 Langside Road, Glasgow, G42 8XL</p>
+      <p class="mt-1">
+        <a href="mailto:madnimasjid196@gmail.com"
+           class="hover:text-emerald-400 transition-colors break-all">
+          madnimasjid196@gmail.com
+        </a>
+      </p>
+      <p class="mt-3 text-gray-500">&copy; <span id="footer-year"></span> Madni Masjid, Glasgow.</p>
+    </div>
+  </footer>
+
+
+  <!--
+    LIGHTBOX — opens when a carousel slide is clicked.
+    The contents (<img> or cloned .slide-placeholder) are inserted by JS
+    on open. Close by: × button / clicking the dark backdrop / pressing Esc.
+  -->
+  <div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button id="lightbox-close" class="lightbox-close" type="button" aria-label="Close photo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M6 6 L18 18 M6 18 L18 6"/>
+      </svg>
+    </button>
+    <div id="lightbox-content" class="lightbox-content"></div>
+  </div>
+
+  <script src="prayer-times.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
