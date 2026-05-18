@@ -9,19 +9,20 @@ Built with plain HTML, CSS, and JavaScript. Tailwind CSS is loaded from a CDN, a
 ## Files
 
 ```
-Madni Masjid/
-├── mmSource/                        Site source (deploy this folder)
-│   ├── index.html                   Page content and structure
-│   ├── style.css                    Custom styles on top of Tailwind
-│   ├── script.js                    Navbar, menu, prayer times, PDF, carousel
-│   ├── prayer-times.js              Daily prayer times — generated file
-│   ├── favicon.svg                  Browser-tab icon (emerald crescent + star)
-│   └── photos/                      Carousel images (drop new photos here)
-│       └── Madni Mssjid.JPG         Interior photo (carousel slide 1)
-├── GCM Prayer Times.xlsx            Source spreadsheet for begin times
-├── jammat Times image.jpg           Source image of the 2026 jamaat rules
-├── _build_data.py                   Python helper that generates prayer-times.js
-└── README.md                        This guide
+madni-masjid/
+├── index.html
+├── style.css
+├── script.js
+├── prayer-times.js
+├── favicon.svg
+├── photos/
+│   └── Madni Mssjid.JPG
+├── resources/
+│   ├── GCM Prayer Times.xlsx
+│   └── jammat Times image.jpg
+├── _build_data.py
+├── README.md
+└── .gitignore
 ```
 
 `mmSource/` contains everything the deployed site needs. The Excel file, the jamaat image, and `_build_data.py` live alongside it because they're only used when regenerating the prayer-times data.
