@@ -1,0 +1,5 @@
+# Ignore the entire resources folder and everything inside it
+resources/
+
+# macOS system files (prevents Finder junk from uploading)
+.DS_Store
