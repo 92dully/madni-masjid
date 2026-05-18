@@ -132,6 +132,176 @@
           Contact
         </a>
       </div>
+
+  <!-- =====================================================
+       Anouncment
+  ====================================================== -->
+
+<style>
+  .eid-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    font-family: 'Georgia', serif;
+  }
+
+  .eid-card {
+    background: linear-gradient(160deg, #1a1a2e 0%, #0f0f1a 100%);
+    border: 1px solid rgba(212, 175, 80, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(212, 175, 80, 0.15);
+    padding: 2.5rem 2rem;
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle radial glow behind content */
+  .eid-card::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(212, 175, 80, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* CSS crescent moon */
+  .eid-crescent {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 1.25rem;
+  }
+  .eid-crescent::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: inset -8px 2px 0 2px #d4af50;
+    transform: rotate(-20deg);
+  }
+
+  .eid-label {
+    font-size: 0.65rem;
+    font-family: 'Helvetica Neue', sans-serif;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #d4af50;
+    margin-bottom: 0.6rem;
+  }
+
+  .eid-title {
+    font-size: 1.9rem;
+    font-weight: bold;
+    color: #f5e6c0;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.15rem;
+    line-height: 1.2;
+  }
+
+  .eid-divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d4af50, transparent);
+    margin: 1rem auto;
+  }
+
+  .eid-date {
+    font-size: 1.05rem;
+    color: #d4af50;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.02em;
+  }
+
+  .eid-day {
+    font-size: 0.8rem;
+    color: rgba(245, 230, 192, 0.55);
+    font-family: 'Helvetica Neue', sans-serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .eid-fajr {
+    font-size: 0.82rem;
+    font-family: 'Helvetica Neue', sans-serif;
+    color: rgba(245, 230, 192, 0.5);
+    margin-bottom: 1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .eid-jamaat {
+    background: linear-gradient(135deg, rgba(212, 175, 80, 0.18), rgba(212, 175, 80, 0.08));
+    border: 1px solid rgba(212, 175, 80, 0.45);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-top: 0.25rem;
+  }
+
+  .eid-jamaat-label {
+    display: block;
+    font-size: 0.6rem;
+    font-family: 'Helvetica Neue', sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(212, 175, 80, 0.7);
+    margin-bottom: 0.25rem;
+  }
+
+  .eid-jamaat-time {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d4af50;
+    letter-spacing: 0.05em;
+  }
+
+  .eid-footer {
+    margin-top: 1.4rem;
+    font-size: 0.7rem;
+    font-family: 'Helvetica Neue', sans-serif;
+    color: rgba(245, 230, 192, 0.3);
+    letter-spacing: 0.1em;
+  }
+</style>
+
+<div class="eid-wrap">
+  <div class="eid-card">
+
+    <div class="eid-crescent"></div>
+
+    <p class="eid-label">Mubarak</p>
+    <h2 class="eid-title">Eid ul Adha</h2>
+
+    <div class="eid-divider"></div>
+
+    <p class="eid-date">27th May 2026</p>
+    <p class="eid-day">Wednesday</p>
+
+    <p class="eid-fajr">Fajr &mdash; 4:15 am</p>
+
+    <div class="eid-jamaat">
+      <span class="eid-jamaat-label">One Only Eid Jamaat</span>
+      <span class="eid-jamaat-time">5:00 am</span>
+    </div>
+
+    <p class="eid-footer">Madni Masjid &middot; Glasgow</p>
+
+  </div>
+</div>
+  <!-- =====================================================
+       end
+  ====================================================== -->
+
     </div>
   </section>
 
