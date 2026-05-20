@@ -639,6 +639,216 @@ html { scroll-behavior: smooth; }
 
 
 /* ==============================================
+   REFURBISHMENT GALLERY — BEFORE / AFTER PAIRS
+   ============================================== */
+/*
+  LAYOUT PHILOSOPHY
+  =================
+  The requirement is that Before and After always sit side by side —
+  even on the narrowest phones. We achieve this with CSS Grid using
+  minmax(0, 1fr): both columns share available space equally and
+  NEVER stack, because we never switch to a single-column layout.
+
+  On very narrow screens (< 360px) the images become small, but they
+  remain legible and clearly paired. The 4:3 aspect-ratio on the image
+  wrapper keeps both panels the same height regardless of the photo's
+  natural dimensions.
+
+  No media-query "override to single-column" exists anywhere — the
+  side-by-side constraint is absolute.
+*/
+
+/* Outer container — stacks multiple BA pairs vertically */
+.ba-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;                   /* space between pair 1 and pair 2 */
+}
+
+/*
+  One Before/After pair.
+  Always 2 equal columns — gap scales with viewport via clamp().
+*/
+.ba-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* equal halves, never collapses */
+  gap: clamp(8px, 2vw, 20px);       /* tight on phones, generous on desktop */
+  align-items: start;
+}
+
+/* One panel = label + image */
+.ba-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* "Before" / "After" labels */
+.ba-label {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.ba-label-before {
+  background: #fef3c7;             /* amber-100 */
+  color: #92400e;                  /* amber-800 */
+  border: 1px solid #fde68a;       /* amber-200 */
+}
+
+.ba-label-after {
+  background: #d1fae5;             /* emerald-100 */
+  color: #065f46;                  /* emerald-800 */
+  border: 1px solid #a7f3d0;       /* emerald-200 */
+}
+
+@media (prefers-color-scheme: dark) {
+  .ba-label-before {
+    background: rgba(146, 64, 14, 0.3);
+    color: #fbbf24;                /* amber-400 */
+    border-color: rgba(251, 191, 36, 0.25);
+  }
+  .ba-label-after {
+    background: rgba(6, 78, 59, 0.4);
+    color: #6ee7b7;                /* emerald-300 */
+    border-color: rgba(110, 231, 183, 0.25);
+  }
+}
+
+/*
+  The image wrapper:
+  - Fixed 4:3 aspect ratio keeps both panels the same height
+  - overflow:hidden clips the image neatly to the rounded corners
+  - position:relative anchors the zoom hint and the missing placeholder
+  - cursor:zoom-in signals the lightbox is available
+*/
+.ba-img-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+  cursor: zoom-in;
+  background: #e7e5e4;             /* stone-200 — visible while image loads */
+  /* Subtle animation on page scroll-reveal */
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.ba-img-wrap:hover,
+.ba-img-wrap:focus-visible {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+/* Focus ring for keyboard users */
+.ba-img-wrap:focus-visible {
+  box-shadow: 0 0 0 3px #059669, 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  .ba-img-wrap { background: #374151; }
+}
+
+/* The photo itself */
+.ba-img-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.ba-img-wrap:hover img,
+.ba-img-wrap:focus-visible img {
+  transform: scale(1.04);           /* subtle zoom on hover */
+}
+
+/*
+  PLACEHOLDER — shown when the image file doesn't exist yet.
+  The onerror handler on <img> adds .ba-missing to the wrapper,
+  which hides the broken image and shows the placeholder beneath.
+*/
+.ba-img-wrap .ba-missing-placeholder {
+  position: absolute;
+  inset: 0;
+  display: none;                    /* hidden by default — only shows when .ba-missing */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  text-align: center;
+  background: linear-gradient(135deg, #e7e5e4, #d6d3d1);
+  color: #78716c;
+  font-size: 0.65rem;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.ba-img-wrap .ba-missing-placeholder svg {
+  width: 28px;
+  height: 28px;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* When the image is missing: hide the broken <img>, show the placeholder */
+.ba-img-wrap.ba-missing img              { display: none; }
+.ba-img-wrap.ba-missing .ba-missing-placeholder { display: flex; }
+
+/* On hover/focus of a missing-image panel, don't scale (nothing to scale) */
+.ba-img-wrap.ba-missing:hover img,
+.ba-img-wrap.ba-missing:focus-visible img { transform: none; }
+
+@media (prefers-color-scheme: dark) {
+  .ba-img-wrap .ba-missing-placeholder {
+    background: linear-gradient(135deg, #44403c, #292524);
+    color: #a8a29e;
+  }
+}
+
+/*
+  ZOOM HINT — small magnifier icon that fades in on hover
+  to remind visitors they can tap/click to enlarge.
+*/
+.ba-zoom-hint {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.ba-img-wrap:hover .ba-zoom-hint,
+.ba-img-wrap:focus-visible .ba-zoom-hint { opacity: 1; }
+
+/* On touch devices the hint is always faintly visible (no hover state) */
+@media (hover: none) {
+  .ba-zoom-hint { opacity: 0.6; }
+}
+
+/* Missing image: don't show the zoom hint */
+.ba-img-wrap.ba-missing .ba-zoom-hint { display: none; }
+
+
+/* ==============================================
    FADE-IN ANIMATIONS
    ============================================== */
 .fade-in {

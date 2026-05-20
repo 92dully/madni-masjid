@@ -802,3 +802,78 @@ initPrayerTimes();
   });
 
 }());
+
+
+/* ==============================================
+   REFURBISHMENT GALLERY — BEFORE / AFTER LIGHTBOX
+   ============================================== */
+/*
+  Hooks the .ba-img-wrap panels in the Gallery section into the
+  existing lightbox (#lightbox / #lightbox-content / #lightbox-close).
+  
+  When a panel is clicked (or activated via keyboard), we:
+  1. Read data-lightbox-src and data-lightbox-alt from the wrapper
+  2. If the wrapper has .ba-missing, show a styled placeholder instead
+  3. Open the existing lightbox — reusing all its close/Esc logic
+  
+  No new lightbox is created; we extend the one already built for the
+  carousel. The gallery and carousel lightboxes share the same overlay.
+*/
+(function () {
+  const lightbox        = document.getElementById('lightbox');
+  const lightboxContent = document.getElementById('lightbox-content');
+  const lightboxClose   = document.getElementById('lightbox-close');
+
+  if (!lightbox || !lightboxContent) return;
+
+  /* Helper: open the lightbox with a given src / alt (or placeholder) */
+  function openGalleryLightbox(wrap) {
+    const src     = wrap.dataset.lightboxSrc  || '';
+    const alt     = wrap.dataset.lightboxAlt  || '';
+    const missing = wrap.classList.contains('ba-missing');
+
+    lightboxContent.innerHTML = '';
+
+    if (missing || !src) {
+      /* No real photo yet — show an enlarged "Photo coming soon" card */
+      const ph = document.createElement('div');
+      ph.className = 'slide-placeholder';       /* reuse existing lightbox placeholder styles */
+      ph.innerHTML =
+        '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">' +
+          '<rect x="3" y="9" width="26" height="18" rx="2"/>' +
+          '<path d="M11 9 L13 6 L19 6 L21 9"/>' +
+          '<circle cx="16" cy="18" r="5"/>' +
+        '</svg>' +
+        '<div class="placeholder-label">Photo coming soon</div>' +
+        '<div class="placeholder-sub">Drop image files into the photos/ folder to activate this slot.</div>';
+      lightboxContent.appendChild(ph);
+    } else {
+      /* Build a fresh <img> so onerror doesn't bleed from the thumbnail */
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = alt;
+      lightboxContent.appendChild(img);
+    }
+
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (lightboxClose) lightboxClose.focus();
+  }
+
+  /* Attach click + keyboard listeners to every gallery panel */
+  document.querySelectorAll('.ba-img-wrap').forEach(function (wrap) {
+
+    wrap.addEventListener('click', function () {
+      openGalleryLightbox(wrap);
+    });
+
+    /* Keyboard: Enter or Space activates the panel (for accessibility) */
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openGalleryLightbox(wrap);
+      }
+    });
+  });
+
+}());
